@@ -11,6 +11,8 @@ def process_file(filename):
 compute = process_file("benchmarks/compute_HSMA33OT.fastq.gz.txt")
 search = process_file("benchmarks/search_k51_HSMA33OT.fastq.gz.txt")
 gather = process_file("benchmarks/gather_k51_HSMA33OT.fastq.gz.txt")
+lca_search = process_file("benchmarks/lca_search_k51_HSMA33OT.fastq.gz.txt")
+lca_gather = process_file("benchmarks/lca_gather_k51_HSMA33OT.fastq.gz.txt")
 
 headers = ["command"] + list(compute.keys())
 
@@ -24,3 +26,5 @@ print("|")
 print("|compute", *compute.values(), sep="|", end="|\n")
 print("|search", *search.values(), sep="|", end="|\n")
 print("|gather", *gather.values(), sep="|", end="|\n")
+print("|lca_search", *lca_search.values(), sep="|", end="|\n")
+print("|lca_gather", *lca_gather.values(), sep="|", end="|\n")
