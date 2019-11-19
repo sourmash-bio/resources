@@ -4,7 +4,7 @@ channels:
   - defaults
 dependencies:
   - python=3.7.3
-  - sourmash=2.0.1
+  - sourmash=2.0.0
 #  - pip:
 #    - -e git+https://github.com/dib-lab/sourmash@deb199d1a82f497fd27a3ad12fcc518fc0da2025#egg=sourmash
 #    - -e git+https://github.com/dib-lab/sourmash@core/rust#egg=sourmash
