@@ -2,15 +2,14 @@ from snakemake.remote.S3 import RemoteProvider as S3RemoteProvider
 
 S3 = S3RemoteProvider(keep_local=True)
 
+COMMANDS_KSIZE = ["gather", "search", "lca_gather", "lca_search"]
+COMMANDS = COMMANDS_KSIZE + ["compute"]
+
+VERSIONS = ["2.0.0", "2.0.1", "2.1.0", "2.2.0", "master"]
+
+
 rule all:
-  input:
-      expand(["inputs/HMP/HSMA33OT.fastq.gz",
-              "outputs/{version}/HSMA33OT.fastq.gz.sig",
-              "outputs/{version}/gather/k51/HSMA33OT.fastq.gz.log",
-              "outputs/{version}/search/k51/HSMA33OT.fastq.gz.log",
-              "outputs/{version}/lca_gather/k51/HSMA33OT.fastq.gz.log",
-              "outputs/{version}/lca_search/k51/HSMA33OT.fastq.gz.log"],
-             version=["2.0.0", "2.0.1", "2.1.0", "2.2.0", "master"])
+  input: expand("plots/{command}.png", command=COMMANDS)
 
 rule download_database:
   output: "inputs/dbs/{db}"
@@ -37,6 +36,18 @@ rule extract_database:
 rule download_metagenome:
   output: "inputs/HMP/HSMA33OT.fastq.gz"
   shell: "wget -O {output[0]} https://ibdmdb.org/tunnel/static/HMP2/WGS/1750/HSMA33OT.fastq.gz"
+
+rule summary:
+  output: "benchmarks/{version}/summary.csv"
+  input:
+    expand('benchmarks/{{version}}/{command}_k51_HSMA33OT.fastq.gz.txt', command=COMMANDS_KSIZE),
+    'benchmarks/{version}/compute_HSMA33OT.fastq.gz.txt',
+  shell: "scripts/summary.py --csv {output} {wildcards.version}"
+
+rule plot:
+  output: expand("plots/{command}.png", command=COMMANDS)
+  input: expand("benchmarks/{version}/summary.csv", version=VERSIONS)
+  shell: "scripts/plot_all.py benchmarks/"
 
 rule compute:
   output: 'outputs/{version}/{filename}.sig'
