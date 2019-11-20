@@ -24,20 +24,20 @@ conda activate sourmash_resources
 
 ### compute
 
-[![](plots/compute.png)](plots/compute.png)
+[![](plots/compute.svg?sanitize=true)](plots/compute.svg)
 
 ### search
 
-[![](plots/search.png)](plots/search.png)
+[![](plots/search.svg?sanitize=true)](plots/search.svg)
 
 ### gather
 
-[![](plots/gather.png)](plots/gather.png)
+[![](plots/gather.svg?sanitize=true)](plots/gather.svg)
 
 ### lca search
 
-[![](plots/lca_search.png)](plots/lca_search.png)
+[![](plots/lca_search.svg?sanitize=true)](plots/lca_search.svg)
 
 ### lca gather
 
-[![](plots/lca_gather.png)](plots/lca_gather.png)
+[![](plots/lca_gather.svg?sanitize=true)](plots/lca_gather.svg)

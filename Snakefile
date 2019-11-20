@@ -9,7 +9,7 @@ VERSIONS = ["2.0.0", "2.0.1", "2.1.0", "2.2.0", "master"]
 
 
 rule all:
-  input: expand("plots/{command}.png", command=COMMANDS)
+  input: expand("plots/{command}.svg", command=COMMANDS)
 
 rule download_database:
   output: "inputs/dbs/{db}"
@@ -45,7 +45,7 @@ rule summary:
   shell: "scripts/summary.py --csv {output} {wildcards.version}"
 
 rule plot:
-  output: expand("plots/{command}.png", command=COMMANDS)
+  output: expand("plots/{command}.svg", command=COMMANDS)
   input: expand("benchmarks/{version}/summary.csv", version=VERSIONS)
   shell: "scripts/plot_all.py benchmarks/"
 

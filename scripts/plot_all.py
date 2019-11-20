@@ -29,15 +29,15 @@ def plot(bench_dir, plot_dir):
     commands = all_summaries.groupby("command")
     for title, group in commands:
         group.sort_values(by="version").plot(
-            x="version", 
+            x="version",
             subplots=True,
-            figsize=(12, 16),
-            layout=(4, 2),
+            figsize=(12, 8),
+            layout=(2, 2),
             sort_columns=True,
             title=title,
             sharex=False,
         )
-        plt.savefig(os.path.join(plot_dir, title + ".png"))
+        plt.savefig(os.path.join(plot_dir, title + ".svg"))
 
     return all_summaries
 
