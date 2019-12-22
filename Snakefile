@@ -2,10 +2,10 @@ from snakemake.remote.S3 import RemoteProvider as S3RemoteProvider
 
 S3 = S3RemoteProvider(keep_local=True)
 
-COMMANDS_KSIZE = ["gather", "search", "lca_gather", "lca_search"]
+COMMANDS_KSIZE = ["gather", "search", "lca_gather", "lca_search", "compare"]
 COMMANDS = COMMANDS_KSIZE + ["compute"]
 
-VERSIONS = ["2.0.0", "2.0.1", "2.1.0", "2.2.0", "2.3.0", "master"]
+VERSIONS = ["2.0.0", "2.0.1", "2.1.0", "2.2.0", "2.3.0", "2.3.1", "master", "rust_similarity"]
 
 
 rule all:
@@ -14,7 +14,7 @@ rule all:
 rule download_database:
   output: "inputs/dbs/{db}"
   input: S3.remote("sourmash-databases/2018-03-29/{db}")
-  shell: "ln -sf ../../{input[0]} {output[0]}"
+  shell: "mv {input[0]} {output[0]}"
 
 rule download_lca_k21_database:
   output: "inputs/lca/genbank-k21.lca.json.gz"
@@ -40,8 +40,8 @@ rule download_metagenome:
 rule summary:
   output: "benchmarks/{version}/summary.csv"
   input:
-    expand('benchmarks/{{version}}/{command}_k51_HSMA33OT.fastq.gz.txt', command=COMMANDS_KSIZE),
-    'benchmarks/{version}/compute_HSMA33OT.fastq.gz.txt',
+    expand('benchmarks/{{version}}/{command}_k51_HSMA33OT.fastq.gz.tsv', command=COMMANDS_KSIZE),
+    'benchmarks/{version}/compute_HSMA33OT.fastq.gz.tsv',
   shell: "scripts/summary.py --csv {output} {wildcards.version}"
 
 rule plot:
@@ -53,7 +53,7 @@ rule compute:
   output: 'outputs/{version}/{filename}.sig'
   input: 'inputs/HMP/{filename}'
   conda: 'envs/sourmash_{version}.yml'
-  benchmark: 'benchmarks/{version}/compute_{filename}.txt'
+  benchmark: 'benchmarks/{version}/compute_{filename}.tsv'
   shell: """
 		sourmash compute -k 21,31,51 \
                      --scaled 2000 \
@@ -64,14 +64,14 @@ rule compute:
   """
 
 rule gather:
-  output: "outputs/{version}/gather/k{ksize}/{filename}.log"
+  output: "outputs/{version}/gather/k{ksize}/{filename}.csv"
   input: 
     sig="outputs/{version}/{filename}.sig",
     db="inputs/dbs/genbank-d2-k{ksize}.sbt.json",
   params:
     ksize = "{ksize}"
   conda: 'envs/sourmash_{version}.yml'
-  benchmark: 'benchmarks/{version}/gather_k{ksize}_{filename}.txt'
+  benchmark: 'benchmarks/{version}/gather_k{ksize}_{filename}.tsv'
   shell: """
    sourmash gather -o {output} \
                    --scaled 2000 \
@@ -80,15 +80,30 @@ rule gather:
                    {input.db}
   """
 
+rule compare:
+  output: "outputs/{version}/compare/k{ksize}/{filename}.csv"
+  input:
+    sig="outputs/{version}/{filename}.sig",
+    db="inputs/dbs/genbank-d2-k{ksize}.sbt.json",
+  params:
+    ksize = "{ksize}"
+  conda: 'envs/sourmash_{version}.yml'
+  benchmark: 'benchmarks/{version}/compare_k{ksize}_{filename}.tsv'
+  shell: """
+   sourmash compare -o {output} \
+                    -k {params.ksize} \
+                    inputs/dbs/.sbt.genbank-d2-k{params.ksize}/12*
+  """
+
 rule search:
-  output: "outputs/{version}/search/k{ksize}/{filename}.log"
+  output: "outputs/{version}/search/k{ksize}/{filename}.csv"
   input: 
     sig="outputs/{version}/{filename}.sig",
     db="inputs/dbs/genbank-d2-k{ksize}.sbt.json",
   params:
     ksize = "{ksize}"
   conda: 'envs/sourmash_{version}.yml'
-  benchmark: 'benchmarks/{version}/search_k{ksize}_{filename}.txt'
+  benchmark: 'benchmarks/{version}/search_k{ksize}_{filename}.tsv'
   shell: """
    sourmash search -o {output} \
                    --scaled 2000 \
@@ -98,14 +113,14 @@ rule search:
   """
 
 rule lca_gather:
-  output: "outputs/{version}/lca_gather/k{ksize}/{filename}.log"
+  output: "outputs/{version}/lca_gather/k{ksize}/{filename}.csv"
   input:
     sig="outputs/{version}/{filename}.sig",
     db="inputs/lca/genbank-k{ksize}.lca.json.gz",
   params:
     ksize = "{ksize}"
   conda: 'envs/sourmash_{version}.yml'
-  benchmark: 'benchmarks/{version}/lca_gather_k{ksize}_{filename}.txt'
+  benchmark: 'benchmarks/{version}/lca_gather_k{ksize}_{filename}.tsv'
   shell: """
    sourmash gather -o {output} \
                    --scaled 2000 \
@@ -115,14 +130,14 @@ rule lca_gather:
   """
 
 rule lca_search:
-  output: "outputs/{version}/lca_search/k{ksize}/{filename}.log"
+  output: "outputs/{version}/lca_search/k{ksize}/{filename}.csv"
   input:
     sig="outputs/{version}/{filename}.sig",
     db="inputs/lca/genbank-k{ksize}.lca.json.gz",
   params:
     ksize = "{ksize}"
   conda: 'envs/sourmash_{version}.yml'
-  benchmark: 'benchmarks/{version}/lca_search_k{ksize}_{filename}.txt'
+  benchmark: 'benchmarks/{version}/lca_search_k{ksize}_{filename}.tsv'
   shell: """
    sourmash search -o {output} \
                    --scaled 2000 \

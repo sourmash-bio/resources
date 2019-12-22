@@ -15,17 +15,18 @@ def process_file(filename):
 
 
 def data_for_version(version):
-    compute = process_file(f"benchmarks/{version}/compute_HSMA33OT.fastq.gz.txt")
-    search = process_file(f"benchmarks/{version}/search_k51_HSMA33OT.fastq.gz.txt")
-    gather = process_file(f"benchmarks/{version}/gather_k51_HSMA33OT.fastq.gz.txt")
-    lca_search = process_file(f"benchmarks/{version}/lca_search_k51_HSMA33OT.fastq.gz.txt")
-    lca_gather = process_file(f"benchmarks/{version}/lca_gather_k51_HSMA33OT.fastq.gz.txt")
+    compute = process_file(f"benchmarks/{version}/compute_HSMA33OT.fastq.gz.tsv")
+    search = process_file(f"benchmarks/{version}/search_k51_HSMA33OT.fastq.gz.tsv")
+    gather = process_file(f"benchmarks/{version}/gather_k51_HSMA33OT.fastq.gz.tsv")
+    lca_search = process_file(f"benchmarks/{version}/lca_search_k51_HSMA33OT.fastq.gz.tsv")
+    lca_gather = process_file(f"benchmarks/{version}/lca_gather_k51_HSMA33OT.fastq.gz.tsv")
+    compare = process_file(f"benchmarks/{version}/compare_k51_HSMA33OT.fastq.gz.tsv")
 
-    return compute, search, gather, lca_search, lca_gather
+    return compute, search, gather, lca_search, lca_gather, compare
 
 
 def csv_for_version(version, csvfile):
-    compute, search, gather, lca_search, lca_gather = data_for_version(version)
+    compute, search, gather, lca_search, lca_gather, compare = data_for_version(version)
 
     headers = ["command"] + list(compute.keys())
     compute.update({"command": "compute"})
@@ -33,6 +34,7 @@ def csv_for_version(version, csvfile):
     gather.update({"command": "gather"})
     lca_search.update({"command": "lca_search"})
     lca_gather.update({"command": "lca_gather"})
+    compare.update({"command": "compare"})
 
     writer = csv.DictWriter(csvfile, headers)
     writer.writeheader()
@@ -41,10 +43,11 @@ def csv_for_version(version, csvfile):
     writer.writerow(gather)
     writer.writerow(lca_search)
     writer.writerow(lca_gather)
+    writer.writerow(compare)
 
 
 def md_for_version(version):
-    compute, search, gather, lca_search, lca_gather = data_for_version(version)
+    compute, search, gather, lca_search, lca_gather, compare = data_for_version(version)
 
     headers = ["command"] + list(compute.keys())
 
@@ -60,6 +63,7 @@ def md_for_version(version):
     print("|gather", *gather.values(), sep="|", end="|\n")
     print("|lca_search", *lca_search.values(), sep="|", end="|\n")
     print("|lca_gather", *lca_gather.values(), sep="|", end="|\n")
+    print("|compare", *compare.values(), sep="|", end="|\n")
 
 
 if __name__ == "__main__":

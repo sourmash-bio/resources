@@ -28,7 +28,7 @@ def plot(bench_dir, plot_dir):
 
     commands = all_summaries.groupby("command")
     for title, group in commands:
-        group.sort_values(by="version").plot(
+        axes = group.sort_values(by="version").plot(
             x="version",
             subplots=True,
             figsize=(12, 8),
@@ -37,6 +37,9 @@ def plot(bench_dir, plot_dir):
             title=title,
             sharex=False,
         )
+        for row in axes:
+            for ax in row:
+                ax.set_ylim(bottom=0)
         plt.savefig(os.path.join(plot_dir, title + ".svg"))
 
     return all_summaries

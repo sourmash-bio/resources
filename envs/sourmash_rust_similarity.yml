@@ -7,4 +7,4 @@ dependencies:
   - numpy=1.17.3
   - bam2fasta=1.0.1
   - pip:
-    - git+https://github.com/dib-lab/sourmash@master#egg=sourmash
+    - git+https://github.com/dib-lab/sourmash@rust_similarity#egg=sourmash
