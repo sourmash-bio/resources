@@ -5,7 +5,7 @@ S3 = S3RemoteProvider(keep_local=True)
 COMMANDS_KSIZE = ["gather", "search", "lca_gather", "lca_search", "compare"]
 COMMANDS = COMMANDS_KSIZE + ["compute"]
 
-VERSIONS = ["2.0.0", "2.0.1", "2.1.0", "2.2.0", "2.3.0", "2.3.1", "master", "rust_similarity"]
+VERSIONS = ["2.0.0", "2.0.1", "2.1.0", "2.2.0", "2.3.0", "2.3.1", "master", "rust_sig"]
 
 
 rule all:
@@ -144,4 +144,21 @@ rule lca_search:
                    -k {params.ksize} \
                    {input.sig} \
                    {input.db}
+  """
+
+rule lca_classify:
+  output: "outputs/{version}/lca_classify/k{ksize}/{filename}.csv"
+  input:
+    sig="outputs/{version}/{filename}.sig",
+    db="inputs/lca/genbank-k{ksize}.lca.json.gz",
+  params:
+    ksize = "{ksize}"
+  conda: 'envs/sourmash_{version}.yml'
+  benchmark: 'benchmarks/{version}/lca_classify_k{ksize}_{filename}.tsv'
+  shell: """
+   sourmash classify -o {output} \
+                     --scaled 2000 \
+                     -k {params.ksize} \
+                     {input.sig} \
+                     {input.db}
   """
