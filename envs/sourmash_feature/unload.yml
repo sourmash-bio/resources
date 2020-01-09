@@ -1,0 +1,16 @@
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.7.3
+  - screed >=0.9
+  - cffi
+  - numpy=1.17.3
+  - matplotlib
+  - scipy
+  - khmer >=2.1
+  - yajl
+  - bam2fasta=1.0.1
+  - pip:
+    - git+https://github.com/dib-lab/sourmash@feature/unload#egg=sourmash
