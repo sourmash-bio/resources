@@ -21,12 +21,13 @@ def data_for_version(version):
     lca_search = process_file(f"benchmarks/{version}/lca_search_k51_HSMA33OT.fastq.gz.tsv")
     lca_gather = process_file(f"benchmarks/{version}/lca_gather_k51_HSMA33OT.fastq.gz.tsv")
     compare = process_file(f"benchmarks/{version}/compare_k51_HSMA33OT.fastq.gz.tsv")
+    index = process_file(f"benchmarks/{version}/index_k51.tsv")
 
-    return compute, search, gather, lca_search, lca_gather, compare
+    return compute, search, gather, lca_search, lca_gather, compare, index
 
 
 def csv_for_version(version, csvfile):
-    compute, search, gather, lca_search, lca_gather, compare = data_for_version(version)
+    compute, search, gather, lca_search, lca_gather, compare, index = data_for_version(version)
 
     headers = ["command"] + list(compute.keys())
     compute.update({"command": "compute"})
@@ -35,6 +36,7 @@ def csv_for_version(version, csvfile):
     lca_search.update({"command": "lca_search"})
     lca_gather.update({"command": "lca_gather"})
     compare.update({"command": "compare"})
+    index.update({"command": "index"})
 
     writer = csv.DictWriter(csvfile, headers)
     writer.writeheader()
@@ -44,10 +46,11 @@ def csv_for_version(version, csvfile):
     writer.writerow(lca_search)
     writer.writerow(lca_gather)
     writer.writerow(compare)
+    writer.writerow(index)
 
 
 def md_for_version(version):
-    compute, search, gather, lca_search, lca_gather, compare = data_for_version(version)
+    compute, search, gather, lca_search, lca_gather, compare, index = data_for_version(version)
 
     headers = ["command"] + list(compute.keys())
 
@@ -64,6 +67,7 @@ def md_for_version(version):
     print("|lca_search", *lca_search.values(), sep="|", end="|\n")
     print("|lca_gather", *lca_gather.values(), sep="|", end="|\n")
     print("|compare", *compare.values(), sep="|", end="|\n")
+    print("|index", *index.values(), sep="|", end="|\n")
 
 
 if __name__ == "__main__":

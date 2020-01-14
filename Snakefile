@@ -3,9 +3,9 @@ from snakemake.remote.S3 import RemoteProvider as S3RemoteProvider
 S3 = S3RemoteProvider(keep_local=True)
 
 COMMANDS_KSIZE = ["gather", "search", "lca_gather", "lca_search", "compare"]
-COMMANDS = COMMANDS_KSIZE + ["compute"]
+COMMANDS = COMMANDS_KSIZE + ["compute"] + ["index"]
 
-VERSIONS = ["2.0.1", "2.1.0", "2.2.0", "2.3.1", "3.0.1", "rust_sig", "optimize/gather"]
+VERSIONS = ["2.0.1", "2.1.0", "2.2.0", "2.3.1", "3.0.1", "rust_sig", "feature/unload"]
 #VERSIONS = ["2.3.1", "3.0.0", "3.0.1", "rust_sig", "feature/unload"]
 
 
@@ -43,6 +43,7 @@ rule summary:
   input:
     expand('benchmarks/{{version}}/{command}_k51_HSMA33OT.fastq.gz.tsv', command=COMMANDS_KSIZE),
     'benchmarks/{version}/compute_HSMA33OT.fastq.gz.tsv',
+    'benchmarks/{version}/index_k51.tsv'
   shell: "scripts/summary.py --csv {output} {wildcards.version}"
 
 rule plot:
@@ -79,6 +80,20 @@ rule gather:
                    -k {params.ksize} \
                    {input.sig} \
                    {input.db}
+  """
+
+rule index:
+  output: "outputs/{version}/index/k{ksize}.sbt.json"
+  input:
+    db="inputs/dbs/genbank-d2-k{ksize}.sbt.json",
+  params:
+    ksize = "{ksize}"
+  conda: 'envs/sourmash_{version}.yml'
+  benchmark: 'benchmarks/{version}/index_k{ksize}.tsv'
+  shell: """
+   sourmash index -k {params.ksize} \
+                  {output} \
+                  inputs/dbs/.sbt.genbank-d2-k{params.ksize}/1*
   """
 
 rule compare:

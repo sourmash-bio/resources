@@ -27,6 +27,10 @@ conda activate sourmash_resources
 
 [![](plots/compute.svg?sanitize=true)](plots/compute.svg)
 
+### index
+
+[![](plots/index.svg?sanitize=true)](plots/index.svg)
+
 ### search
 
 [![](plots/search.svg?sanitize=true)](plots/search.svg)
