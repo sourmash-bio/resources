@@ -5,8 +5,7 @@ S3 = S3RemoteProvider(keep_local=True)
 COMMANDS_KSIZE = ["gather", "search", "lca_gather", "lca_search", "compare"]
 COMMANDS = COMMANDS_KSIZE + ["compute"] + ["index"]
 
-VERSIONS = ["2.0.1", "2.1.0", "2.2.0", "2.3.1", "3.0.1", "rust_sig", "feature/unload"]
-#VERSIONS = ["2.3.1", "3.0.0", "3.0.1", "rust_sig", "feature/unload"]
+VERSIONS = ["2.0.1", "2.1.0", "2.2.0", "2.3.1", "3.0.1", "master"]
 
 
 rule all:
