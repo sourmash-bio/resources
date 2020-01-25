@@ -1,0 +1,22 @@
+on:
+  push:
+    branches:
+    - '*'
+  pull_request:
+    branches:
+    - '*'
+
+jobs:
+  benchmark:
+    name: Run sourmash commands over various versions
+    runs-on: 'ubuntu-latest'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: goanpeca/setup-miniconda@v1
+        with:
+          activate-environment: sourmash_resources
+          environment-file: environment.yml
+      - name: Run snakemake pipeline
+        shell: bash -l {0}
+        run: snakemake --use-conda
+      ## TODO: upload output to gh-pages
