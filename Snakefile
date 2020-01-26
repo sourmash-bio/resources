@@ -1,20 +1,16 @@
-from snakemake.remote.S3 import RemoteProvider as S3RemoteProvider
-
-S3 = S3RemoteProvider(keep_local=True)
-
 COMMANDS_KSIZE = ["gather", "search", "lca_gather", "lca_search", "compare"]
 COMMANDS = COMMANDS_KSIZE + ["compute"] + ["index"]
 
 VERSIONS = ["2.0.1", "2.1.0", "2.2.0", "2.3.1", "3.0.1", "3.1.0", "master"]
 
-
 rule all:
   input: expand("plots/{command}.svg", command=COMMANDS)
 
-rule download_database:
+rule download_sbt_databases:
   output: "inputs/dbs/{db}"
-  input: S3.remote("sourmash-databases/2018-03-29/{db}")
-  shell: "mv {input[0]} {output[0]}"
+  shell: """
+      curl -L -o {output[0]} https://s3-us-west-2.amazonaws.com/sourmash-databases/2018-03-29/{wildcards.db}
+  """
 
 rule download_lca_k21_database:
   output: "inputs/lca/genbank-k21.lca.json.gz"
