@@ -7,9 +7,9 @@ rule all:
   input: expand("plots/{command}.svg", command=COMMANDS)
 
 rule download_sbt_databases:
-  output: "inputs/dbs/{db}"
+  output: "inputs/dbs/{db}.tar.gz"
   shell: """
-      curl -L -o {output[0]} https://s3-us-west-2.amazonaws.com/sourmash-databases/2018-03-29/{wildcards.db}
+      curl -L -o {output[0]} https://s3-us-west-2.amazonaws.com/sourmash-databases/2018-03-29/{wildcards.db}.tar.gz
   """
 
 rule download_lca_k21_database:
