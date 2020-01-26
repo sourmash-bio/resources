@@ -18,7 +18,7 @@ jobs:
           environment-file: environment.yml
       - name: Run snakemake pipeline
         shell: bash -l {0}
-        run: snakemake --use-conda
+        run: snakemake --use-conda -j 1
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v2.10.1
         env:
