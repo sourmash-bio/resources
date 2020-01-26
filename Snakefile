@@ -6,10 +6,25 @@ VERSIONS = ["2.0.1", "2.1.0", "2.2.0", "2.3.1", "3.0.1", "3.1.0", "master"]
 rule all:
   input: expand("plots/{command}.svg", command=COMMANDS)
 
+SBT_URLS = {
+  'genbank': {
+    '21': 'https://osf.io/nqs7k/download',
+    '31': 'https://osf.io/h7k8a/download',
+    '51': 'https://osf.io/jznwe/download'
+  }
+}
+
+# lca genbank:
+# k21: https://osf.io/d7rv8/download
+# k31: https://osf.io/4f8n3/download
+# k51: https://osf.io/nemkw/download
+
 rule download_sbt_databases:
-  output: "inputs/dbs/{db}.tar.gz"
+  output: "inputs/dbs/{db}-d2-k{ksize}.tar.gz"
+  params:
+    url = lambda w: SBT_URLS[w.db][w.ksize]
   shell: """
-      curl -L -o {output[0]} https://s3-us-west-2.amazonaws.com/sourmash-databases/2018-03-29/{wildcards.db}.tar.gz
+      curl -L -o {output[0]} {params.url}
   """
 
 rule download_lca_k21_database:
