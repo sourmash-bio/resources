@@ -12,5 +12,6 @@ dependencies:
   - khmer >=2.1
   - yajl
   - bam2fasta=1.0.1
+  - rust
   - pip:
     - git+https://github.com/dib-lab/sourmash@master#egg=sourmash
