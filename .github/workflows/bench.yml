@@ -19,4 +19,9 @@ jobs:
       - name: Run snakemake pipeline
         shell: bash -l {0}
         run: snakemake --use-conda
-      ## TODO: upload output to gh-pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v2.10.1
+        env:
+          ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          PUBLISH_BRANCH: master
+          PUBLISH_DIR: plots
