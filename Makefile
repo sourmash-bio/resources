@@ -1,5 +1,5 @@
 all:
-	snakemake --use-conda
+	snakemake --use-conda -j1
 
 full_clean:
 	-rm -rf benchmarks plots .snakemake/conda outputs
