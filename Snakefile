@@ -14,10 +14,13 @@ SBT_URLS = {
   }
 }
 
-# lca genbank:
-# k21: https://osf.io/d7rv8/download
-# k31: https://osf.io/4f8n3/download
-# k51: https://osf.io/nemkw/download
+LCA_URLS = {
+  'genbank': {
+    '21': 'https://osf.io/d7rv8/download',
+    '31': 'https://osf.io/4f8n3/download',
+    '51': 'https://osf.io/nemkw/download'
+  }
+}
 
 rule download_sbt_databases:
   output: "inputs/dbs/{db}-d2-k{ksize}.tar.gz"
@@ -27,17 +30,11 @@ rule download_sbt_databases:
       curl -L -o {output[0]} {params.url}
   """
 
-rule download_lca_k21_database:
-  output: "inputs/lca/genbank-k21.lca.json.gz"
-  shell: "curl -L -o {output[0]} https://osf.io/d7rv8/download"
-
-rule download_lca_k31_database:
-  output: "inputs/lca/genbank-k31.lca.json.gz"
-  shell: "curl -L -o {output[0]} https://osf.io/4f8n3/download"
-
-rule download_lca_k51_database:
-  output: "inputs/lca/genbank-k51.lca.json.gz"
-  shell: "curl -L -o {output[0]} https://osf.io/nemkw/download"
+rule download_lca_database:
+  output: "inputs/lca/{db}-k{ksize}.lca.json.gz"
+  params:
+    url = lambda w: LCA_URLS[w.db][w.ksize]
+  shell: "curl -L -o {output[0]} {params.url}"
 
 rule extract_database:
   output: "inputs/dbs/{filename}.sbt.json"
