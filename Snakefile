@@ -1,7 +1,7 @@
 COMMANDS_KSIZE = ["gather", "search", "lca_gather", "lca_search", "compare"]
 COMMANDS = COMMANDS_KSIZE + ["compute"] + ["index"]
 
-VERSIONS = ["2.0.1", "2.1.0", "2.2.0", "2.3.1", "3.0.1", "3.1.0", "3.2.1", "master"]
+VERSIONS = ["2.0.1", "2.1.0", "2.2.0", "2.3.1", "3.0.1", "3.1.0", "3.2.2", "master"]
 
 rule all:
   input: expand("plots/{command}.svg", command=COMMANDS)
@@ -185,3 +185,12 @@ rule lca_classify:
                      {input.sig} \
                      {input.db}
   """
+
+onstart:
+  shell("scripts/cpu_freq_benchmark")
+
+onerror:
+  shell("scripts/unset_cpufreq.sh")
+
+onsuccess:
+  shell("scripts/unset_cpufreq.sh")
