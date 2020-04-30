@@ -1,7 +1,7 @@
 COMMANDS_KSIZE = ["gather", "search", "lca_gather", "lca_search", "compare"]
 COMMANDS = COMMANDS_KSIZE + ["compute"] + ["index"]
 
-VERSIONS = ["2.0.1", "2.1.0", "2.2.0", "2.3.1", "3.0.1", "3.1.0", "3.2.3", "master", "zip"]
+VERSIONS = ["2.0.1", "2.1.0", "2.2.0", "2.3.1", "3.0.1", "3.1.0", "3.2.3", "master"]
 
 rule all:
   input: expand("plots/{command}.svg", command=COMMANDS)
@@ -74,7 +74,7 @@ rule compute:
 
 rule gather:
   output: "outputs/{version}/gather/k{ksize}/{filename}.csv"
-  input: 
+  input:
     sig="outputs/{version}/{filename}.sig",
     db="inputs/dbs/genbank-d2-k{ksize}.sbt.json",
   params:
@@ -97,6 +97,20 @@ rule index:
     ksize = "{ksize}"
   conda: 'envs/sourmash_{version}.yml'
   benchmark: 'benchmarks/{version}/index_k{ksize}.tsv'
+  shell: """
+   sourmash index -k {params.ksize} \
+                  {output} \
+                  inputs/dbs/.sbt.genbank-d2-k{params.ksize}/1*
+  """
+
+rule zipindex:
+  output: "outputs/master/index/k{ksize}.sbt.zip"
+  input:
+    db="inputs/dbs/genbank-d2-k{ksize}.sbt.json",
+  params:
+    ksize = "{ksize}"
+  conda: 'envs/sourmash_master.yml'
+  benchmark: 'benchmarks/master/index_k{ksize}.tsv'
   shell: """
    sourmash index -k {params.ksize} \
                   {output} \
@@ -194,3 +208,5 @@ onerror:
 
 onsuccess:
   shell("scripts/unset_cpufreq.sh")
+
+ruleorder: zipindex > index
