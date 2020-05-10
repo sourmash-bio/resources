@@ -9,8 +9,6 @@ dependencies:
   - numpy=1.17.3
   - matplotlib
   - scipy
-  - khmer >=2.1
-  - yajl
   - bam2fasta=1.0.1
   - rust
   - pip:
