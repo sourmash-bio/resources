@@ -75,7 +75,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--csv", type=argparse.FileType('w'))
-    parser.add_argument("version", nargs="?", default="master")
+    parser.add_argument("version", nargs="?", default="latest")
     args = parser.parse_args()
 
     if args.csv:

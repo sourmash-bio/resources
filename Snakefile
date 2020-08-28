@@ -1,7 +1,7 @@
 COMMANDS_KSIZE = ["gather", "search", "lca_gather", "lca_search", "compare"]
 COMMANDS = COMMANDS_KSIZE + ["compute"] + ["index"]
 
-VERSIONS = ["2.0.1", "2.1.0", "2.2.0", "2.3.1", "3.0.1", "3.1.0", "3.2.3", "3.3.1", "master", "btree"]
+VERSIONS = ["2.0.1", "2.1.0", "2.2.0", "2.3.1", "3.0.1", "3.1.0", "3.2.3", "3.3.1", "3.4.1", "3.5.0", "latest"]
 
 rule all:
   input: expand("plots/{command}.svg", command=COMMANDS)
@@ -104,13 +104,13 @@ rule index:
   """
 
 rule zipindex:
-  output: "outputs/master/index/k{ksize}.sbt.zip"
+  output: "outputs/latest/index/k{ksize}.sbt.zip"
   input:
     db="inputs/dbs/genbank-d2-k{ksize}.sbt.json",
   params:
     ksize = "{ksize}"
-  conda: 'envs/sourmash_master.yml'
-  benchmark: 'benchmarks/master/index_k{ksize}.tsv'
+  conda: 'envs/sourmash_latest.yml'
+  benchmark: 'benchmarks/latest/index_k{ksize}.tsv'
   shell: """
    sourmash index -k {params.ksize} \
                   {output} \
