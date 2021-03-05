@@ -1,5 +1,5 @@
 all:
-	snakemake --use-conda -j1
+	snakemake --conda-frontend mamba --use-conda -j1
 
 full_clean:
 	-rm -rf benchmarks plots .snakemake/conda outputs

@@ -1,7 +1,20 @@
 COMMANDS_KSIZE = ["gather", "search", "lca_gather", "lca_search", "compare"]
 COMMANDS = COMMANDS_KSIZE + ["compute"] + ["index"]
 
-VERSIONS = ["2.0.1", "2.1.0", "2.2.0", "2.3.1", "3.0.1", "3.1.0", "3.2.3", "3.3.1", "3.4.1", "3.5.0", "latest"]
+VERSIONS = [
+  "2.0.1",
+  "2.1.0",
+  "2.2.0",
+  "2.3.1",
+  "3.0.1",
+  "3.1.0",
+  "3.2.3",
+  "3.3.1",
+  "3.4.1",
+  "3.5.1",
+  "4.0.0",
+  "latest",
+]
 
 rule all:
   input: expand("plots/{command}.svg", command=COMMANDS)
@@ -201,12 +214,12 @@ rule lca_classify:
   """
 
 onstart:
-  shell("scripts/cpu_freq_benchmark")
+  shell("doas scripts/cpu_freq_benchmark")
 
 onerror:
-  shell("scripts/unset_cpufreq.sh")
+  shell("doas scripts/unset_cpufreq.sh")
 
 onsuccess:
-  shell("scripts/unset_cpufreq.sh")
+  shell("doas scripts/unset_cpufreq.sh")
 
 ruleorder: zipindex > index
