@@ -2,17 +2,20 @@ COMMANDS_KSIZE = ["gather", "search", "lca_gather", "lca_search", "compare"]
 COMMANDS = COMMANDS_KSIZE + ["compute"] + ["index"]
 
 VERSIONS = [
-  "2.0.1",
-  "2.1.0",
-  "2.2.0",
-  "2.3.1",
-  "3.0.1",
-  "3.1.0",
-  "3.2.3",
-  "3.3.1",
-  "3.4.1",
+#  "2.0.1",
+#  "2.1.0",
+#  "2.2.0",
+#  "2.3.1",
+#  "3.0.1",
+#  "3.1.0",
+#  "3.2.3",
+#  "3.3.1",
+#  "3.4.1",
   "3.5.1",
   "4.0.0",
+  "4.1.2",
+  "4.2.4",
+  "4.3.0",
   "latest",
 ]
 
@@ -69,7 +72,11 @@ rule summary:
 rule plot:
   output: expand("plots/{command}.svg", command=COMMANDS)
   input: expand("benchmarks/{version}/summary.csv", version=VERSIONS)
-  shell: "scripts/plot_all.py benchmarks/"
+  params:
+    versions_str = lambda _: ','.join(VERSIONS)
+  shell: """
+    scripts/plot_all.py --versions "{params.versions_str}" benchmarks/
+  """
 
 rule compute:
   output: 'outputs/{version}/{filename}.sig'
@@ -77,9 +84,8 @@ rule compute:
   conda: 'envs/sourmash_{version}.yml'
   benchmark: 'benchmarks/{version}/compute_{filename}.tsv'
   shell: """
-		sourmash compute -k 21,31,51 \
+    sourmash compute -k 21,31,51 \
                      --scaled 2000 \
-                     --track-abundance \
                      --name-from-first \
                      -o {output} \
                      {input}
@@ -102,7 +108,7 @@ rule gather:
                    {input.db}
   """
 
-rule index:
+rule oldindex:
   output: "outputs/{version}/index/k{ksize}.sbt.json"
   input:
     db="inputs/dbs/genbank-d2-k{ksize}.sbt.json",
@@ -116,14 +122,14 @@ rule index:
                   inputs/dbs/.sbt.genbank-d2-k{params.ksize}/1*
   """
 
-rule zipindex:
-  output: "outputs/latest/index/k{ksize}.sbt.zip"
+rule index:
+  output: "outputs/{version}/index/k{ksize}.sbt.zip"
   input:
     db="inputs/dbs/genbank-d2-k{ksize}.sbt.json",
   params:
     ksize = "{ksize}"
-  conda: 'envs/sourmash_latest.yml'
-  benchmark: 'benchmarks/latest/index_k{ksize}.tsv'
+  conda: 'envs/sourmash_{version}.yml'
+  benchmark: 'benchmarks/{version}/index_k{ksize}.tsv'
   shell: """
    sourmash index -k {params.ksize} \
                   {output} \
@@ -213,13 +219,14 @@ rule lca_classify:
                      {input.db}
   """
 
-onstart:
-  shell("doas scripts/cpu_freq_benchmark")
+#onstart:
+#  shell("doas scripts/cpu_freq_benchmark")
 
-onerror:
-  shell("doas scripts/unset_cpufreq.sh")
+#onerror:
+#  shell("doas scripts/unset_cpufreq.sh")
 
-onsuccess:
-  shell("doas scripts/unset_cpufreq.sh")
+#onsuccess:
+#  shell("doas scripts/unset_cpufreq.sh")
 
-ruleorder: zipindex > index
+#ruleorder: zipindex > index
+ruleorder: index > oldindex
